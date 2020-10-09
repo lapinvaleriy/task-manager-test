@@ -5,9 +5,7 @@ RUN apt-get update && apt-get install -y \
     git \
     libmcrypt-dev \
     libpq-dev \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo_pgsql
-
+    && docker-php-ext-install pdo_mysql
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php --filename=composer

@@ -8,6 +8,8 @@ services:
         restart: always
         volumes:
             - ./project:/usr/src/app
+        depends_on:
+            - db
 
     nginx:
         container_name: nginx
@@ -27,6 +29,9 @@ services:
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: task_manager
+            MYSQL_USER: task_manager_user
+            MYSQL_PASSWORD: 123456
         volumes:
             - ./docker/db:/var/lib/mysql
         ports:
