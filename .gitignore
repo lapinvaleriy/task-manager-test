@@ -1,0 +1,6 @@
+.idea
+/docker/db
+.env
+/project/var/log
+/project/var/cache
+/project/vendor
