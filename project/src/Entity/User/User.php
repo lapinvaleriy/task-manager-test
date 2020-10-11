@@ -10,9 +10,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @ORM\Table(name="user_user")
  * @ORM\Entity(repositoryClass="App\Repository\User\UserRepository")
- *
-// * @UniqueEntity("email")
-// * @UniqueEntity("apiToken")
  */
 class User implements UserInterface
 {
@@ -45,6 +42,20 @@ class User implements UserInterface
      * @ORM\Column(name="api_token", type="string", unique=true, nullable=true)
      */
     private ?string $apiToken;
+
+    /**
+     * @var
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Task\Task", mappedBy="creator")
+     */
+    private $createdTasks;
+
+    /**
+     * @var
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Task\Task", mappedBy="performer")
+     */
+    private $tasksToPerform;
 
     /**
      * @return int
@@ -100,6 +111,38 @@ class User implements UserInterface
     public function setApiToken(?string $apiToken): void
     {
         $this->apiToken = $apiToken;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedTasks()
+    {
+        return $this->createdTasks;
+    }
+
+    /**
+     * @param mixed $createdTasks
+     */
+    public function setCreatedTasks($createdTasks): void
+    {
+        $this->createdTasks = $createdTasks;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTasksToPerform()
+    {
+        return $this->tasksToPerform;
+    }
+
+    /**
+     * @param mixed $tasksToPerform
+     */
+    public function setTasksToPerform($tasksToPerform): void
+    {
+        $this->tasksToPerform = $tasksToPerform;
     }
 
     /**
