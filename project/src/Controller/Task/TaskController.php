@@ -4,12 +4,11 @@ namespace App\Controller\Task;
 
 use App\Manager\Task\TaskManager;
 use App\Message\TaskCreateMessage;
+use App\Model\Task\TaskCreateModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Class TaskController
@@ -29,38 +28,31 @@ class TaskController
     private MessageBusInterface $messageBus;
 
     /**
-     * @var Security
-     */
-    private Security $security;
-
-    /**
      * TaskController constructor.
      *
      * @param TaskManager         $taskManager
      * @param MessageBusInterface $messageBus
-     * @param Security            $security
      */
-    public function __construct(TaskManager $taskManager, MessageBusInterface $messageBus, Security $security)
+    public function __construct(TaskManager $taskManager, MessageBusInterface $messageBus)
     {
         $this->taskManager = $taskManager;
-        $this->messageBus  = $messageBus;
-        $this->security = $security;
+        $this->messageBus = $messageBus;
     }
 
     /**
-     * @param Request $request
+     * @param TaskCreateModel $createModel
      *
      * @return JsonResponse
      *
      * @Route("/create", name="task_create", methods={"POST"})
      */
-    public function create(Request $request): JsonResponse
+    public function create(TaskCreateModel $createModel): JsonResponse
     {
         $this->messageBus->dispatch(
             new TaskCreateMessage(
-                $this->security->getUser(),
-                $request->get('title'),
-                $request->get('description')
+                $createModel->getCreator(),
+                $createModel->getTitle(),
+                $createModel->getDescription()
             )
         );
 

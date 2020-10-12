@@ -3,16 +3,31 @@
 namespace App\Model\Task;
 
 use App\Entity\User\User;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class TaskCreateModel
 {
-    private User $creator;
+    /**
+     * @var null|User
+     *
+     * @Assert\NotNull()
+     */
+    private ?User $creator;
 
-    private string $title;
+    /**
+     * @var string
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(max = 255)
+     */
+    private ?string $title;
 
+    /**
+     * @var string|null
+     */
     private ?string $description;
 
-    public function __construct(User $creator, string $title, string $description)
+    public function __construct(?User $creator, ?string $title, ?string $description)
     {
         $this->creator = $creator;
         $this->title = $title;
