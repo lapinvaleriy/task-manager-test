@@ -5,12 +5,12 @@ RUN apt-get update && apt-get install -y \
     git \
     libmcrypt-dev \
     libpq-dev \
-    && docker-php-ext-install pdo_mysql
+    librabbitmq-dev \
+    && pecl install amqp \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-enable amqp
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-RUN php composer-setup.php --filename=composer
-RUN php -r "unlink('composer-setup.php');"
-RUN mv composer /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
 WORKDIR /usr/src/app
 

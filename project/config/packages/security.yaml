@@ -1,21 +1,18 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Entity\User\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: true
-#            lazy: ~
+            provider: app_user_provider
             guard:
                 entry_point: App\Security\TokenAuthenticator
                 authenticators:
                     - App\Security\TokenAuthenticator
-#    access_control:
-#        - { path: ^/api/v2/*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/create_code, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/lndngpgsmth, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/, roles: ROLE_USER }

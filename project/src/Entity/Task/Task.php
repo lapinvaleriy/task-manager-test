@@ -26,7 +26,7 @@ class Task
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User\User", inversedBy="createdTasks")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id")
      */
     private User $creator;
 
@@ -34,7 +34,7 @@ class Task
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User\User", inversedBy="tasksToPerfmorm")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="performer_id", referencedColumnName="id", nullable=true)
      */
     private ?User $performer;
 
@@ -54,11 +54,11 @@ class Task
     private string $title;
 
     /**
-     * @var string
+     * @var null|string
      *
      * @ORM\Column(name="decription", type="text", nullable=true)
      */
-    private string $description;
+    private ?string $description;
 
     /**
      * @var \DateTime
@@ -70,12 +70,16 @@ class Task
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="updated_at", type="datetime")
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private \DateTime $updatedAt;
 
-    public function __construct()
+    public function __construct(User $creator, string $title, ?string $description)
     {
+        $this->creator = $creator;
+        $this->title = $title;
+        $this->description = $description;
+        $this->createdAt = new \DateTime();
     }
 
     /**
@@ -151,9 +155,9 @@ class Task
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -161,7 +165,7 @@ class Task
     /**
      * @param string $description
      */
-    public function setDescription(string $description): void
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }

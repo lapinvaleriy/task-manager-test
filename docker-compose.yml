@@ -1,15 +1,16 @@
 version: '3.8'
 services:
     php:
-        build:
-            context: "./docker/php"
-            dockerfile: "Dockerfile"
+        build: ./docker/php/
         container_name: php
         restart: always
         volumes:
             - ./project:/usr/src/app
+        environment:
+            - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
         depends_on:
             - db
+            - rabbitmq
 
     nginx:
         container_name: nginx
@@ -36,3 +37,17 @@ services:
             - ./docker/db:/var/lib/mysql
         ports:
             - 6042:3306
+    
+    rabbitmq:
+        container_name: rabbitmq
+        build: ./docker/rabbitmq/
+        restart: always
+        volumes:
+            - rabbitmq:/var/lib/rabbitmq/
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+            
+volumes:
+    rabbitmq:
+    db:

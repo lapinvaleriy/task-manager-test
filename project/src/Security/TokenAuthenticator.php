@@ -27,6 +27,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     /**
      * TokenAuthenticator constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -40,7 +41,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            'message' => 'Authentication Required'
+            'message' => 'Authentication Required',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
@@ -51,7 +52,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        return $request->headers->has(self::TOKEN_NAME);
+        return true;
     }
 
     /**
@@ -60,10 +61,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         $credentials = $request->headers->get(self::TOKEN_NAME);
-
-//        dd('here');
         if (null === $credentials) {
-            throw new \UnexpectedValueException();
+            return new JsonResponse(['hi'], Response::HTTP_UNAUTHORIZED);
         }
 
         return $credentials;
@@ -95,7 +94,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $data = [
-            'message' => 'Your token is invalid'
+            'message' => 'Your token is invalid',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);

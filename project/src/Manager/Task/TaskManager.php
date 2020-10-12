@@ -2,7 +2,8 @@
 
 namespace App\Manager\Task;
 
-use App\Model\Task\TaskCreateModel;
+use App\Entity\Task\Task;
+use App\Entity\User\User;
 use App\Repository\Task\TaskRepository;
 
 class TaskManager
@@ -21,7 +22,12 @@ class TaskManager
         $this->taskRepository = $taskRepository;
     }
 
-    public function create(TaskCreateModel $taskCreateModel)
+    public function create(User $creator, string $title, ?string $description): Task
     {
+        $task = new Task($creator, $title, $description);
+
+        $this->taskRepository->persist($task);
+
+        return $task;
     }
 }
