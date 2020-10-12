@@ -7,7 +7,7 @@ services:
         volumes:
             - ./project:/usr/src/app
         environment:
-            - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
+            - MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f
         depends_on:
             - db
             - rabbitmq
@@ -40,14 +40,11 @@ services:
     
     rabbitmq:
         container_name: rabbitmq
-        build: ./docker/rabbitmq/
+        image: rabbitmq:3.8-management
         restart: always
-        volumes:
-            - rabbitmq:/var/lib/rabbitmq/
         ports:
-            - "5672:5672"
-            - "15672:15672"
+            - 5672:5672
+            - 15672:15672
             
 volumes:
-    rabbitmq:
     db:

@@ -22,9 +22,9 @@ class TaskCreateMessage
     /**
      * @return User
      */
-    public function getCreator(): User
+    public function getCreator()
     {
-        return $this->creator;
+        return $this->creator->getId();
     }
 
     /**
