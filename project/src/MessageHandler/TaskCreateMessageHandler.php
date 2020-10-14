@@ -3,43 +3,42 @@
 namespace App\MessageHandler;
 
 use App\Common\Doctrine\Flusher;
-use App\Manager\Task\TaskManager;
+use App\Entity\Task\Task;
 use App\Message\TaskCreateMessage;
+use App\Repository\Task\TaskRepository;
 use App\Repository\User\UserRepository;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class TaskCreateMessageHandler implements MessageHandlerInterface
 {
     /**
-     * @var TaskManager
+     * @var TaskRepository
      */
-    private TaskManager $taskManager;
+    private TaskRepository $taskRepository;
+
+    /**
+     * @var UserRepository
+     */
+    private UserRepository $userRepository;
 
     /**
      * @var Flusher
      */
     private Flusher $flusher;
-    /**
-     * @var UserRepository
-     */
-    private UserRepository $repository;
 
-    public function __construct(TaskManager $taskManager, Flusher $flusher, UserRepository $repository)
+    public function __construct(TaskRepository $taskRepository, UserRepository $userRepository, Flusher $flusher)
     {
-        $this->taskManager = $taskManager;
+        $this->taskRepository = $taskRepository;
         $this->flusher = $flusher;
-        $this->repository = $repository;
+        $this->userRepository = $userRepository;
     }
 
     public function __invoke(TaskCreateMessage $taskCreateMessage)
     {
-        $user = $this->repository->find($taskCreateMessage->getCreator());
+        $user = $this->userRepository->find($taskCreateMessage->getCreator());
 
-        $this->taskManager->create(
-            $user,
-            $taskCreateMessage->getTitle(),
-            $taskCreateMessage->getDescription()
-        );
+        $task = new Task($user, $taskCreateMessage->getTitle(), $taskCreateMessage->getDescription());
+        $this->taskRepository->persist($task);
 
         $this->flusher->flush();
     }

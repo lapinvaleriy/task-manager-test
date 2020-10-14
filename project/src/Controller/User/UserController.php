@@ -2,7 +2,8 @@
 
 namespace App\Controller\User;
 
-use App\Manager\User\UserManager;
+use App\Entity\User\User;
+use App\Repository\User\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,24 +16,33 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController
 {
     /**
-     * @var UserManager
+     * @var UserRepository
      */
-    private UserManager $userManager;
+    private UserRepository $userRepository;
 
     /**
      * UserController constructor.
-     * @param UserManager $userManager
+     * @param UserRepository $userRepository
      */
-    public function __construct(UserManager $userManager)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->userManager = $userManager;
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * @Route("/login", name="user_login", methods={"POST"})
+     * @Route("/create-token/{email}", name="create_token", methods={"POST"})
      */
-    public function login(): JsonResponse
+    public function createToken(string $email): JsonResponse
     {
-        return new JsonResponse('hello', Response::HTTP_OK);
+        /** @var User $user */
+        $user = $this->userRepository->findBy(['email' => $email]);
+        if (!$user) {
+            new JsonResponse("User with email {$email} not found", Response::HTTP_NOT_FOUND);
+        }
+
+        //generate token
+        $user->setApiToken('');
+
+        return new JsonResponse('', Response::HTTP_CREATED);
     }
 }

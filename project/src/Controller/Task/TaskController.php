@@ -2,9 +2,11 @@
 
 namespace App\Controller\Task;
 
-use App\Manager\Task\TaskManager;
 use App\Message\TaskCreateMessage;
 use App\Model\Task\TaskCreateModel;
+use App\Model\Task\TaskOutputModel;
+use App\Repository\Task\TaskRepository;
+use App\Serializer\Task\TaskSerializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -18,25 +20,32 @@ use Symfony\Component\Routing\Annotation\Route;
 class TaskController
 {
     /**
-     * @var TaskManager
-     */
-    private TaskManager $taskManager;
-
-    /**
      * @var MessageBusInterface
      */
     private MessageBusInterface $messageBus;
 
     /**
+     * @var TaskRepository
+     */
+    private TaskRepository $taskRepository;
+
+    /**
+     * @var TaskSerializer
+     */
+    private TaskSerializer $serializer;
+
+    /**
      * TaskController constructor.
      *
-     * @param TaskManager         $taskManager
      * @param MessageBusInterface $messageBus
+     * @param TaskRepository $taskRepository
+     * @param TaskSerializer $serializer
      */
-    public function __construct(TaskManager $taskManager, MessageBusInterface $messageBus)
+    public function __construct(MessageBusInterface $messageBus, TaskRepository $taskRepository, TaskSerializer $serializer)
     {
-        $this->taskManager = $taskManager;
         $this->messageBus = $messageBus;
+        $this->taskRepository = $taskRepository;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -60,18 +69,51 @@ class TaskController
     }
 
     /**
-     * @Route("/get/{id}", name="get_task", methods={"GET"})
+     * @Route("/get/created", name="get_created_tasks", methods={"GET"})
      */
-    public function get(int $id)
+    public function getAllCreated()
     {
 
     }
 
     /**
-     * @Route("/get", name="get_tasks", methods={"GET"})
+     * @Route("/get/to-perform", name="get_tasks_to_perform", methods={"GET"})
+     */
+    public function getAllToPerform()
+    {
+
+    }
+
+    /**
+     * @Route("/get/created/{id}", name="get_created_task", methods={"GET"})
+     */
+    public function getOneCreatedById(int $id)
+    {
+
+    }
+
+    /**
+     * @Route("/get/to-perform/{id}", name="get_task_to_pefrom", methods={"GET"})
+     */
+    public function getOneToPerformById(int $id)
+    {
+
+    }
+
+    /**
+     * @Route("/get/all", name="get_tasks", methods={"GET"})
      */
     public function getAll()
     {
+        $task = $this->taskRepository->find(1);
 
+        $this->serializer->build($task);
+
+        $data = [
+            $this->serializer->build($task),
+            $this->serializer->build($task)
+        ];
+
+        return new JsonResponse($data);
     }
 }

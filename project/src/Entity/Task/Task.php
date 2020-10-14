@@ -3,6 +3,7 @@
 namespace App\Entity\Task;
 
 use App\Entity\User\User;
+use App\Enum\Task\TaskStatusEnum;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -39,12 +40,11 @@ class Task
     private ?User $performer;
 
     /**
-     * @var TaskStatus
+     * @var string
      *
-     * @ORM\OneToOne(targetEntity="App\Entity\Task\TaskStatus")
-     * @ORM\JoinColumn(name="status_id", referencedColumnName="id")
+     * @ORM\Column(name="status", type="string")
      */
-    private TaskStatus $status;
+    private string $status;
 
     /**
      * @var string
@@ -56,7 +56,7 @@ class Task
     /**
      * @var null|string
      *
-     * @ORM\Column(name="decription", type="text", nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private ?string $description;
 
@@ -79,6 +79,7 @@ class Task
         $this->creator = $creator;
         $this->title = $title;
         $this->description = $description;
+        $this->status = TaskStatusEnum::STATUS_NEW;
         $this->createdAt = new \DateTime();
     }
 
@@ -123,17 +124,17 @@ class Task
     }
 
     /**
-     * @return TaskStatus
+     * @return string
      */
-    public function getStatus(): TaskStatus
+    public function getStatus(): string
     {
         return $this->status;
     }
 
     /**
-     * @param TaskStatus $status
+     * @param string $status
      */
-    public function setStatus(TaskStatus $status): void
+    public function setStatus(string $status): void
     {
         $this->status = $status;
     }
