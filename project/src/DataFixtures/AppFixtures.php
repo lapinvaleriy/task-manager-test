@@ -17,6 +17,8 @@ class AppFixtures extends Fixture
             $user = new User();
             $user->setName("user_$i");
             $user->setEmail("user$i@test.com");
+
+            $manager->persist($user);
         }
 
         $manager->flush();

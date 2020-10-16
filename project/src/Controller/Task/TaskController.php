@@ -4,7 +4,6 @@ namespace App\Controller\Task;
 
 use App\Message\TaskCreateMessage;
 use App\Model\Task\TaskCreateModel;
-use App\Model\Task\TaskOutputModel;
 use App\Repository\Task\TaskRepository;
 use App\Serializer\Task\TaskSerializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -110,10 +109,9 @@ class TaskController
         $this->serializer->build($task);
 
         $data = [
-            $this->serializer->build($task),
-            $this->serializer->build($task)
+
         ];
 
-        return new JsonResponse($data);
+        return new JsonResponse($this->serializer->build($task));
     }
 }
