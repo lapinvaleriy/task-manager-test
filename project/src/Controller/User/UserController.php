@@ -4,6 +4,7 @@ namespace App\Controller\User;
 
 use App\Repository\User\UserRepository;
 use App\Service\User\UserTokenCreator;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/api/v1/user")
  */
-class UserController
+class UserController extends AbstractFOSRestController
 {
     /**
      * @var UserTokenCreator
@@ -49,6 +50,6 @@ class UserController
 
         $token = $this->tokenCreator->create($user);
 
-        return new JsonResponse(['token' => $token], Response::HTTP_CREATED);
+        return $this->json(['token' => $token], Response::HTTP_CREATED);
     }
 }

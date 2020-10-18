@@ -27,8 +27,8 @@ class UserTokenCreator
     public function __construct(TokenGenerator $tokenGenerator, EntityManagerInterface $entityManager, Flusher $flusher)
     {
         $this->tokenGenerator = $tokenGenerator;
-        $this->entityManager  = $entityManager;
-        $this->flusher        = $flusher;
+        $this->entityManager = $entityManager;
+        $this->flusher = $flusher;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\ArgumentValueResolver\Task;
 
+use App\Exception\RequestValidationException;
 use App\Model\Task\TaskCreateModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
@@ -47,14 +48,13 @@ class CreateTaskValueResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
         $object = new TaskCreateModel(
-            $this->security->getUser(),
             $request->get('title'),
             $request->get('description')
         );
 
         $errors = $this->validator->validate($object);
         if (count($errors) > 0) {
-            throw new \RuntimeException('Data is not valid');
+            throw new RequestValidationException('Data is not valid');
         }
 
         yield $object;

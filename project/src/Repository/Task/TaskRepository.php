@@ -3,23 +3,92 @@
 namespace App\Repository\Task;
 
 use App\Entity\Task\Task;
+use App\Entity\User\User;
+use App\Exception\EntityNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class TaskRepository extends ServiceEntityRepository
 {
+    /**
+     * TaskRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Task::class);
     }
 
     /**
-     * @param Task $task
+     * @param User $user
+     * @param int $id
      *
-     * @throws \Doctrine\ORM\ORMException
+     * @return Task|null
+     *
+     * @throws NonUniqueResultException
+     * @throws EntityNotFoundException
      */
-    public function persist(Task $task)
+    public function getOneCreatedForUserById(User $user, int $id): ?Task
     {
-        $this->getEntityManager()->persist($task);
+        $task = $this->createQueryBuilder('t')
+            ->where('t.creator = :user')
+            ->andWhere('t.id = :id')
+            ->setParameters([
+                'user' => $user,
+                'id' => $id
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$task) {
+            throw new EntityNotFoundException("Task with id $id not found");
+        }
+
+        return $task;
+    }
+
+    /**
+     * @param User $user
+     * @param int $id
+     *
+     * @return Task|null
+     *
+     * @throws NonUniqueResultException
+     * @throws EntityNotFoundException
+     */
+    public function getOneToPerformForUserById(User $user, int $id): ?Task
+    {
+        $task = $this->createQueryBuilder('t')
+            ->where('t.performer = :user')
+            ->andWhere('t.id = :id')
+            ->setParameters([
+                'user' => $user,
+                'id' => $id
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$task) {
+            throw new EntityNotFoundException("Task with id $id not found");
+        }
+
+        return $task;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return array
+     */
+    public function findAllForUser(User $user)
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.creator = :user')
+            ->orWhere('t.performer = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
     }
 }
