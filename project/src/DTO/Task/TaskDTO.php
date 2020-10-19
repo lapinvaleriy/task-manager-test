@@ -11,6 +11,7 @@ class TaskDTO
 {
     /**
      * @Serializer\Type("integer")
+     * @Serializer\ReadOnly()
      *
      * @var int
      */
@@ -18,6 +19,7 @@ class TaskDTO
 
     /**
      * @Serializer\Type("string")
+     * @Serializer\ReadOnly()
      *
      * @var string
      */
@@ -25,6 +27,7 @@ class TaskDTO
 
     /**
      * @Serializer\Type("string")
+     * @Serializer\ReadOnly()
      *
      * @var null|string
      */
@@ -32,13 +35,15 @@ class TaskDTO
 
     /**
      * @Serializer\Type("string")
+     * @Serializer\ReadOnly()
      *
      * @var string
      */
     private string $status;
 
     /**
-     * @Serializer\Type("DateTime<Y-m-d H:i:s>")
+     * @Serializer\Type("DateTime<'Y-m-d H:i:s'>")
+     * @Serializer\ReadOnly()
      *
      * @var \DateTime
      */

@@ -20,7 +20,7 @@ services:
             - ./project/public/:/usr/src/app
             - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
         ports:
-            - 8080:80
+            - 8085:80
         depends_on:
             - php
   

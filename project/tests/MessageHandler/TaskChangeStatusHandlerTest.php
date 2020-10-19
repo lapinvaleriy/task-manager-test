@@ -4,6 +4,7 @@ namespace App\Tests\MessageHandler;
 
 use App\Common\Doctrine\Flusher;
 use App\Entity\Task\Task;
+use App\Message\TaskChangeStatusMessage;
 use App\MessageHandler\TaskChangeStatusHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +15,7 @@ class TaskChangeStatusHandlerTest extends TestCase
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $flusher = $this->createMock(Flusher::class);
-        $taskChangeStatusMessage = $this->createMock(TaskChangeStatusHandler::class);
+        $taskChangeStatusMessage = $this->createMock(TaskChangeStatusMessage::class);
         $task = $this->createMock(Task::class);
 
         $taskChangeStatusMessage->expects($this->once())->method('getTask')->willReturn($task);

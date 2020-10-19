@@ -5,6 +5,7 @@ namespace App\Controller\User;
 use App\Repository\User\UserRepository;
 use App\Service\User\UserTokenCreator;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,13 +35,47 @@ class UserController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Post(
+     *      tags={"User"},
+     *      summary="Create token for user by email",
+     *      @SWG\Parameter(
+     *          name="email",
+     *          in="body",
+     *          type="string",
+     *          description="User's email",
+     *          required=true,
+     *          @SWG\Schema(type="string")
+     *      ),
+     *      @SWG\Response(
+     *          response=201,
+     *          description="success response",
+     *          @SWG\Schema(
+     *              type="{'token' => '123456'}"
+     *          )
+     *      ),
+     *      @SWG\Response(
+     *          response=400,
+     *          description="email not set",
+     *      ),
+     *      @SWG\Response(
+     *          response=404,
+     *          description="email not found",
+     *      ),
+     *    )
+     *
      * @Route("/create-token", name="create_token", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function createToken(Request $request): JsonResponse
     {
         $email = $request->get('email');
         if (!$email) {
-            return new JsonResponse("Email not set", Response::HTTP_NOT_FOUND);
+            return new JsonResponse("Email not set", Response::HTTP_BAD_REQUEST);
         }
 
         $user = $this->userRepository->findOneBy(['email' => $email]);

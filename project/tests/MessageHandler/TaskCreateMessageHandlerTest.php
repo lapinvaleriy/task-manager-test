@@ -3,6 +3,7 @@
 namespace App\Tests\MessageHandler;
 
 use App\Common\Doctrine\Flusher;
+use App\Entity\User\User;
 use App\Message\TaskCreateMessage;
 use App\MessageHandler\TaskCreateMessageHandler;
 use App\Repository\User\UserRepository;
@@ -17,7 +18,7 @@ class TaskCreateMessageHandlerTest extends TestCase
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $flusher = $this->createMock(Flusher::class);
         $taskCreateMessage = $this->createMock(TaskCreateMessage::class);
-        $user = $this->createMock(UserRepository::class);
+        $user = $this->createMock(User::class);
 
         $userRepository->expects($this->once())->method('find')->willReturn($user);
         $taskCreateMessage->expects($this->once())->method('getTitle');

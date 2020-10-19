@@ -10,10 +10,12 @@ use App\Repository\Task\TaskRepository;
 use App\Service\Task\TaskCreator;
 use App\Service\Task\TaskStatusChanger;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class TaskController
@@ -71,11 +73,35 @@ class TaskController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Post(
+     *      tags={"Task"},
+     *      summary="Create task",
+     *       @SWG\Parameter(
+     *          name="title",
+     *          in="body",
+     *          type="string",
+     *          description="Task title",
+     *          required=true,
+     *          @SWG\Schema(type="string")
+     *      ),
+     *      @SWG\Parameter(
+     *          name="description",
+     *          in="body",
+     *          type="string",
+     *          description="Task description",
+     *          @SWG\Schema(type="string")
+     *      ),
+     *      @SWG\Response(
+     *          response=201,
+     *          description="empty response",
+     *      ),
+     *    )
+     *
+     * @Route("/create", name="task_create", methods={"POST"})
+     *
      * @param TaskCreateModel $createModel
      *
      * @return JsonResponse
-     *
-     * @Route("/create", name="task_create", methods={"POST"})
      */
     public function create(TaskCreateModel $createModel): JsonResponse
     {
@@ -85,14 +111,43 @@ class TaskController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Post(
+     *      tags={"Task"},
+     *      summary="Change task status",
+     *       @SWG\Parameter(
+     *          name="task_id",
+     *          in="body",
+     *          type="integer",
+     *          description="Task id",
+     *          required=true,
+     *          @SWG\Schema(type="string")
+     *      ),
+     *       @SWG\Parameter(
+     *          name="status",
+     *          in="body",
+     *          type="string",
+     *          description="New status",
+     *          required=true,
+     *          @SWG\Schema(type="string")
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="empty response",
+     *      ),
+     *      @SWG\Response(
+     *          response=404,
+     *          description="task not found or status does not exists",
+     *      ),
+     *    )
+     *
+     * @Route("/change-status", name="task_change_status", methods={"POST"})
+     *
      * @param TaskChangeStatusModel $changeStatusModel
      *
      * @return JsonResponse
      *
      * @throws \App\Exception\EntityNotFoundException
      * @throws \Doctrine\ORM\NonUniqueResultException
-     *
-     * @Route("/change-status", name="task_change_status", methods={"POST"})
      */
     public function changeStatus(TaskChangeStatusModel $changeStatusModel): JsonResponse
     {
@@ -102,6 +157,19 @@ class TaskController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Get(
+     *      tags={"Task"},
+     *      summary="Get list of created tasks by user",
+     *      @SWG\Response(
+     *          response=200,
+     *          description="Array of objects",
+     *          @SWG\Schema(
+     *              type="array",
+     *              @SWG\Items(ref=@Model(type=App\DTO\Task\TaskDTO::class))
+     *          )
+     *      )
+     *  )
+     *
      * @Route("/get/created", name="get_created_tasks", methods={"GET"})
      */
     public function getAllCreated(): JsonResponse
@@ -116,6 +184,19 @@ class TaskController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Get(
+     *      tags={"Task"},
+     *      summary="Get list of tasks to perform",
+     *      @SWG\Response(
+     *          response=200,
+     *          description="Array of objects",
+     *          @SWG\Schema(
+     *              type="array",
+     *              @SWG\Items(ref=@Model(type=App\DTO\Task\TaskDTO::class))
+     *          )
+     *      )
+     *  )
+     *
      * @Route("/get/to-perform", name="get_tasks_to_perform", methods={"GET"})
      */
     public function getAllToPerform(): JsonResponse
@@ -130,7 +211,28 @@ class TaskController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Get(
+     *      tags={"Task"},
+     *      summary="Get created task by id",
+     *      @SWG\Response(
+     *          response=200,
+     *          description="Task object",
+     *          @SWG\Schema(ref=@Model(type=App\DTO\Task\TaskDTO::class))
+     *      ),
+     *      @SWG\Response(
+     *          response=404,
+     *          description="task not found",
+     *      ),
+     *  )
+     *
      * @Route("/get/created/{id}", name="get_created_task", methods={"GET"})
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     *
+     * @throws \App\Exception\EntityNotFoundException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getOneCreatedById(int $id): JsonResponse
     {
@@ -140,7 +242,28 @@ class TaskController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Get(
+     *      tags={"Task"},
+     *      summary="Get task to perform by id",
+     *      @SWG\Response(
+     *          response=200,
+     *          description="Task object",
+     *          @SWG\Schema(ref=@Model(type=App\DTO\Task\TaskDTO::class))
+     *      ),
+     *      @SWG\Response(
+     *          response=404,
+     *          description="task not found",
+     *      ),
+     *  )
+     *
      * @Route("/get/to-perform/{id}", name="get_task_to_pefrom", methods={"GET"})
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     *
+     * @throws \App\Exception\EntityNotFoundException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getOneToPerformById(int $id): JsonResponse
     {
@@ -150,6 +273,19 @@ class TaskController extends AbstractFOSRestController
     }
 
     /**
+     * @SWG\Get(
+     *      tags={"Task"},
+     *      summary="Get list of all created tasks by user and tasks to perform for user",
+     *      @SWG\Response(
+     *          response=200,
+     *          description="Array of objects",
+     *          @SWG\Schema(
+     *              type="array",
+     *              @SWG\Items(ref=@Model(type=App\DTO\Task\TaskDTO::class))
+     *          )
+     *      )
+     *  )
+     *
      * @Route("/get/all", name="get_tasks", methods={"GET"})
      */
     public function getAll(): JsonResponse
