@@ -24,8 +24,8 @@ class UserTokenCreatorTest extends TestCase
         $flusher = $this->createMock(Flusher::class);
         $user = $this->createMock(User::class);
 
-        $tokenGenerator->expects($this->once())->method('create')->willReturn($token);
-        $user->expects($this->once())->method('setApiToken');
+        $tokenGenerator->expects($this->once())->method('generate')->willReturn($token);
+        $user->expects($this->once())->method('setApiToken')->with($token);
         $entityManager->expects($this->once())->method('persist');
         $flusher->expects($this->once())->method('flush');
 
@@ -33,7 +33,6 @@ class UserTokenCreatorTest extends TestCase
         $createdToken = $creator->create($user);
 
         $this->assertEquals($createdToken, $token);
-        $this->assertEquals($user->getApiToken(), $token);
     }
 
     public function createProvider(): array
