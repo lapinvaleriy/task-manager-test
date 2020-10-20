@@ -1,6 +1,10 @@
 .idea
 /docker/db
 .env
-/project/var/log
-/project/var/cache
-/project/vendor
+var/log
+var/cache
+/vendor
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+

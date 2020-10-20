@@ -9,8 +9,6 @@ doctrine:
                 user: 'task_manager_user'
                 password: '123456'
                 charset: UTF8
-#                unix_socket: /run/mysqld/mysqld.sock
-#                server_version: "mariadb-10.5.5"
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
