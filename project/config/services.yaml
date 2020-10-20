@@ -33,3 +33,11 @@ services:
     App\ArgumentValueResolver\Task\CreateTaskValueResolver:
         tags:
             - { name: controller.argument_value_resolver, priority: 50 }
+
+    App\ArgumentValueResolver\Task\TaskChangeStatusValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 50 }
+
+    App\ArgumentValueResolver\Task\AssignTaskValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 50 }

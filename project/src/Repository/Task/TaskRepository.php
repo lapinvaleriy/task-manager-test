@@ -8,7 +8,6 @@ use App\Exception\EntityNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class TaskRepository extends ServiceEntityRepository
 {
@@ -19,6 +18,23 @@ class TaskRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Task::class);
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return object
+     *
+     * @throws EntityNotFoundException
+     */
+    public function getTaskById(int $id): Task
+    {
+        $task = $this->find($id);
+        if (!$task) {
+            throw new EntityNotFoundException("Task with id $id not found");
+        }
+
+        return $task;
     }
 
     /**

@@ -4,9 +4,11 @@ namespace App\Controller\Task;
 
 use App\DTOTransformer\Task\TaskDTOTransformer;
 use App\Entity\Task\Task;
+use App\Model\Task\TaskAssignModel;
 use App\Model\Task\TaskChangeStatusModel;
 use App\Model\Task\TaskCreateModel;
 use App\Repository\Task\TaskRepository;
+use App\Service\Task\TaskAssigner;
 use App\Service\Task\TaskCreator;
 use App\Service\Task\TaskStatusChanger;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -25,20 +27,6 @@ use Symfony\Component\Security\Core\Security;
 class TaskController extends AbstractFOSRestController
 {
     /**
-     * @var TaskRepository
-     */
-    private TaskRepository $taskRepository;
-
-    /**
-     * @var TaskDTOTransformer
-     */
-    private TaskDTOTransformer $taskDTOTransformer;
-    /**
-     * @var Security
-     */
-    private Security $security;
-
-    /**
      * @var TaskCreator
      */
     private TaskCreator $taskCreator;
@@ -49,17 +37,39 @@ class TaskController extends AbstractFOSRestController
     private TaskStatusChanger $taskStatusChanger;
 
     /**
+     * @var TaskAssigner
+     */
+    private TaskAssigner $taskAssigner;
+
+    /**
+     * @var TaskRepository
+     */
+    private TaskRepository $taskRepository;
+
+    /**
+     * @var TaskDTOTransformer
+     */
+    private TaskDTOTransformer $taskDTOTransformer;
+
+    /**
+     * @var Security
+     */
+    private Security $security;
+
+    /**
      * TaskController constructor.
      *
-     * @param TaskCreator $taskCreator
-     * @param TaskStatusChanger $taskStatusChanger
-     * @param TaskRepository $taskRepository
+     * @param TaskCreator        $taskCreator
+     * @param TaskStatusChanger  $taskStatusChanger
+     * @param TaskAssigner       $taskAssigner
+     * @param TaskRepository     $taskRepository
      * @param TaskDTOTransformer $taskDTOTransformer
-     * @param Security $security
+     * @param Security           $security
      */
     public function __construct(
         TaskCreator $taskCreator,
         TaskStatusChanger $taskStatusChanger,
+        TaskAssigner $taskAssigner,
         TaskRepository $taskRepository,
         TaskDTOTransformer $taskDTOTransformer,
         Security $security
@@ -67,6 +77,7 @@ class TaskController extends AbstractFOSRestController
     {
         $this->taskCreator = $taskCreator;
         $this->taskStatusChanger = $taskStatusChanger;
+        $this->taskAssigner = $taskAssigner;
         $this->taskRepository = $taskRepository;
         $this->taskDTOTransformer = $taskDTOTransformer;
         $this->security = $security;
@@ -95,7 +106,11 @@ class TaskController extends AbstractFOSRestController
      *          response=201,
      *          description="empty response",
      *      ),
-     *    )
+     *      @SWG\Response(
+     *          response=400,
+     *          description="input fields are not valid",
+     *      ),
+     *   )
      *
      * @Route("/create", name="task_create", methods={"POST"})
      *
@@ -108,6 +123,55 @@ class TaskController extends AbstractFOSRestController
         $this->taskCreator->create($createModel);
 
         return $this->json([], Response::HTTP_CREATED);
+    }
+
+    /**
+     * @SWG\Post(
+     *      tags={"Task"},
+     *      summary="Assign task to user",
+     *      @SWG\Parameter(
+     *          name="task_id",
+     *          in="body",
+     *          type="string",
+     *          description="Task id which you would to assign",
+     *          required=true,
+     *          @SWG\Schema(type="string")
+     *      ),
+     *      @SWG\Parameter(
+     *          name="user_id",
+     *          in="body",
+     *          type="string",
+     *          description="User id to whom you would assign the task",
+     *          required=true,
+     *          @SWG\Schema(type="string")
+     *      ),
+     *      @SWG\Response(
+     *          response=200,
+     *          description="task assigned",
+     *      ),
+     *      @SWG\Response(
+     *          response=400,
+     *          description="input fields are not valid",
+     *      ),
+     *      @SWG\Response(
+     *          response=404,
+     *          description="task or user not found",
+     *      )
+     *   )
+     *
+     * @Route("/assign", name="task_assign", methods={"POST"})
+     *
+     * @param TaskAssignModel $taskAssignModel
+     *
+     * @return JsonResponse
+     *
+     * @throws \App\Exception\EntityNotFoundException
+     */
+    public function assign(TaskAssignModel $taskAssignModel)
+    {
+        $this->taskAssigner->assign($taskAssignModel);
+
+        return $this->json([], Response::HTTP_OK);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Tests\Service\Task;
 
 use App\Entity\Task\Task;
 use App\Entity\User\User;
+use App\Enum\Task\TaskStatusEnum;
 use App\Exception\EntityNotFoundException;
 use App\Message\TaskChangeStatusMessage;
 use App\Model\Task\TaskChangeStatusModel;
@@ -52,7 +53,6 @@ class TaskStatusChangerTest extends TestCase
 
     public function testChangeStatusWhenTestNull()
     {
-        $taskChangeStatusMessage = $this->createMock(TaskChangeStatusMessage::class);
         $taskChangeStatusModel = $this->createMock(TaskChangeStatusModel::class);
         $user = $this->createMock(User::class);
 
@@ -71,7 +71,90 @@ class TaskStatusChangerTest extends TestCase
         $this->taskStatusChanger->changeStatus($taskChangeStatusModel);
     }
 
-    public function testChangeStatus()
+    /**
+     * @param string $nonExistentStatus
+     *
+     * @throws EntityNotFoundException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @dataProvider changeUnexpectedStatusProvider
+     */
+    public function testChangeStatusWhenStatusDoesNotExist(string $nonExistentStatus)
+    {
+        $taskChangeStatusModel = $this->createMock(TaskChangeStatusModel::class);
+        $user = $this->createMock(User::class);
+        $task = $this->createMock(Task::class);
+
+        $this->security->expects($this->once())
+                       ->method('getUser')
+                       ->willReturn($user);
+
+        $this->taskRepository->expects($this->once())
+                             ->method('getOneToPerformForUserById')
+                             ->willReturn($task);
+
+        $this->expectException(EntityNotFoundException::class);
+        $this->expectExceptionMessage("Status $nonExistentStatus not found");
+
+        $taskChangeStatusModel->expects($this->once())->method('getStatus')->willReturn($nonExistentStatus);
+        $task->expects($this->never())->method('getStatus');
+        $this->messageBus->expects($this->never())->method('dispatch');
+
+        $this->taskStatusChanger->changeStatus($taskChangeStatusModel);
+    }
+
+    public function changeUnexpectedStatusProvider():array
+    {
+        return [
+            ['non-existent_status']
+        ];
+    }
+
+    /**
+     * @param string $status
+     *
+     * @throws EntityNotFoundException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @dataProvider changeSameStatusProvider
+     */
+    public function testChangeStatusIfStatusIsSame(string $status)
+    {
+        $taskChangeStatusModel = $this->createMock(TaskChangeStatusModel::class);
+        $user = $this->createMock(User::class);
+        $task = $this->createMock(Task::class);
+
+        $this->security->expects($this->once())
+                       ->method('getUser')
+                       ->willReturn($user);
+
+        $this->taskRepository->expects($this->once())
+                             ->method('getOneToPerformForUserById')
+                             ->willReturn($task);
+
+        $taskChangeStatusModel->expects($this->once())->method('getStatus')->willReturn($status);
+        $task->expects($this->once())->method('getStatus')->willReturn($status);
+        $this->messageBus->expects($this->never())->method('dispatch');
+
+        $this->taskStatusChanger->changeStatus($taskChangeStatusModel);
+    }
+
+    public function changeSameStatusProvider():array
+    {
+        return [
+            [TaskStatusEnum::STATUS_IN_PROGRESS]
+        ];
+    }
+
+    /**
+     * @param string $status
+     *
+     * @throws EntityNotFoundException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @dataProvider changeStatusProvider
+     */
+    public function testChangeStatus(string $status)
     {
         $taskChangeStatusMessage = $this->createMock(TaskChangeStatusMessage::class);
         $taskChangeStatusModel = $this->createMock(TaskChangeStatusModel::class);
@@ -86,11 +169,19 @@ class TaskStatusChangerTest extends TestCase
                              ->method('getOneToPerformForUserById')
                              ->willReturn($task);
 
+        $taskChangeStatusModel->expects($this->once())->method('getStatus')->willReturn($status);
+
         $this->messageBus->expects($this->once())
                          ->method('dispatch')
-                         ->with($taskChangeStatusMessage)
                          ->willReturn(new Envelope($taskChangeStatusMessage));
 
         $this->taskStatusChanger->changeStatus($taskChangeStatusModel);
+    }
+
+    public function changeStatusProvider():array
+    {
+        return [
+            [TaskStatusEnum::STATUS_DONE]
+        ];
     }
 }

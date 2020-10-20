@@ -6,10 +6,11 @@ framework:
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
              async: 'amqp://guest:guest@rabbitmq:5672/%2f'
-            # failed: 'doctrine://default?queue_name=failed'
              sync: 'sync://'
+            # failed: 'doctrine://default?queue_name=failed'
 
         routing:
             # Route your messages to the transports
              'App\Message\TaskCreateMessage': sync
              'App\Message\TaskChangeStatusMessage': sync
+             'App\Message\TaskAssignMessage': sync
