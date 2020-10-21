@@ -87,6 +87,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Post(
      *      tags={"Task"},
      *      summary="Create task",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *       @SWG\Parameter(
      *          name="title",
      *          in="body",
@@ -129,6 +136,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Post(
      *      tags={"Task"},
      *      summary="Assign task to user",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *      @SWG\Parameter(
      *          name="task_id",
      *          in="body",
@@ -178,6 +192,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Post(
      *      tags={"Task"},
      *      summary="Change task status",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *       @SWG\Parameter(
      *          name="task_id",
      *          in="body",
@@ -224,6 +245,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Get(
      *      tags={"Task"},
      *      summary="Get list of created tasks by user",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *      @SWG\Response(
      *          response=200,
      *          description="Array of objects",
@@ -251,6 +279,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Get(
      *      tags={"Task"},
      *      summary="Get list of tasks to perform",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *      @SWG\Response(
      *          response=200,
      *          description="Array of objects",
@@ -278,6 +313,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Get(
      *      tags={"Task"},
      *      summary="Get created task by id",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *      @SWG\Response(
      *          response=200,
      *          description="Task object",
@@ -309,6 +351,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Get(
      *      tags={"Task"},
      *      summary="Get task to perform by id",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *      @SWG\Response(
      *          response=200,
      *          description="Task object",
@@ -340,6 +389,13 @@ class TaskController extends AbstractFOSRestController
      * @SWG\Get(
      *      tags={"Task"},
      *      summary="Get list of all created tasks by user and tasks to perform for user",
+     *      @SWG\Parameter(
+     *          name="X-AUTH-TOKEN",
+     *          in="header",
+     *          type="string",
+     *          description="Auth token",
+     *          required=true,
+     *       ),
      *      @SWG\Response(
      *          response=200,
      *          description="Array of objects",
