@@ -11,3 +11,8 @@ API documentation
 ```
 %host%/api/doc
 ```
+
+
+```
+docker exec php /bin/bash -c "php bin/console messenger:consume"
+```

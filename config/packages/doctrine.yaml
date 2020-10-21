@@ -3,11 +3,11 @@ doctrine:
         connections:
             default:
                 driver: pdo_mysql
-                host: 'db'
-                port: '3306'
-                dbname: 'task_manager'
-                user: 'task_manager_user'
-                password: '123456'
+                host: "%env(DATABASE_HOST)%"
+                port: "%env(DATABASE_PORT)%"
+                dbname: "%env(DATABASE_NAME)%"
+                user: "%env(DATABASE_USER)%"
+                password: "%env(DATABASE_PASSWORD)%"
                 charset: UTF8
     orm:
         auto_generate_proxy_classes: true
