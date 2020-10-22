@@ -25,7 +25,7 @@ docker exec php /bin/bash -c "php bin/console messenger:consume"
 Or you can just download and configure supervisor c:
 Or you can just configure synchronous `sync` transport type in `config/messenger.yaml`
 
-####How to test
+#### How to test
 `build.sh` script will create three users by default in your database. These users will have 
 emails like 'user%N%@test.com' where N is 1-3 number.
 Therefore, for do some operations on tasks you must to create the token(see API documentation)
